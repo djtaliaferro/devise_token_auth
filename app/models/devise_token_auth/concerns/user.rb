@@ -100,7 +100,12 @@ module DeviseTokenAuth::Concerns::User
 
 
     def tokens_has_json_column_type?
-      table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
+      if ActiveRecord::Base.connected? 
+        table_exists? && self.columns_hash['tokens'] && self.columns_hash['tokens'].type.in?([:json, :jsonb])
+      else
+        logger.debug "Cannot establish connection to DB!"
+        false
+      end
     end
   end
 
